@@ -17,15 +17,17 @@ implements the core's `GameDefinition`. Nothing in the lab or core knows about a
 specific game.
 
 - `packages/core` (`@lab/core`) — game-agnostic kernel: the `GameDefinition` and
-  `Policy` contracts, a seeded/serializable RNG, the match runner, baseline
-  policies, and the game registry.
-- `packages/engine` (`@pax/engine`) — the Pax Pamir 2e rules engine, plus a
-  `paxGame` adapter that implements `GameDefinition`.
+  `Policy` contracts, a seeded/serializable RNG, the match runner, the tournament
+  runner (seat rotation + stats), baseline policies, and the game registry.
+- `packages/engine` (`@pax/engine`) — the Pax Pamir 2e rules engine + a `paxGame`
+  adapter and a `greedy` policy.
+- `packages/monopoly` (`@games/monopoly`) — a Monopoly engine (dice-driven; the
+  game that exercises the in-game RNG model) + a `buyer` policy.
 - `apps/lab` (`@lab/cli`) — runs tournaments and reports results.
-- `apps/server`, `apps/web` — the original Pax server + spectator UI (being
+- `apps/server`, `apps/web` — the original Pax server + spectator UI (to be
   repurposed into a generic state inspector and results dashboard).
 
-Planned: `packages/games/monopoly`, `packages/games/catan`.
+Planned: `packages/catan`.
 
 ## Quick start
 
@@ -39,14 +41,17 @@ games so first-player advantage is averaged out; results report per-seat-game
 win rate with 95% confidence intervals plus a head-to-head matrix.
 
 ```bash
-# 99 games, a heuristic vs. two random bots, write CSV + JSON
-npm run dev:lab -- --seats greedy,random,random --games 99 --seed 1 --out results
+# Pax: a heuristic vs. two random bots, write CSV + JSON
+npm run dev:lab -- --game pax --seats greedy,random,random --games 99 --seed 1 --out results
+
+# Monopoly: an aggressive buyer vs. two random bots
+npm run dev:lab -- --game monopoly --seats buyer,random,random --games 99 --seed 1
 ```
 
-Flags: `--game <id>`, `--seats <s1,s2,...>` (one strategy per seat),
-`--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate`, `--out <prefix>`.
-Built-in strategies: `random`, `first` (game-agnostic), `greedy` (Pax). A run is
-fully reproducible from its seed.
+Flags: `--game <id>` (`pax`, `monopoly`), `--seats <s1,s2,...>` (one strategy per
+seat), `--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate`, `--out <prefix>`.
+Built-in strategies: `random`, `first` (any game), `greedy` (Pax), `buyer`
+(Monopoly). A run is fully reproducible from its seed.
 
 ### Useful scripts
 

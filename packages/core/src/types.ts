@@ -5,6 +5,7 @@ export type PlayerId = string;
 export type EndReason =
   | "victory" // a winner (or tie) was decided by the game's own rules
   | "draw" // game ended by its rules with no winner
+  | "max_turns" // the game self-reported a turn cap and decided a winner (e.g. by score)
   | "step_limit" // the runner stopped it before it finished
   | "no_legal_actions" // the active player had no moves and the game did not end
   | "unfinished"; // game state is non-terminal (default from result() before a run ends)
