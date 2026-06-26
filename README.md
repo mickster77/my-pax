@@ -31,14 +31,22 @@ Planned: `packages/games/monopoly`, `packages/games/catan`.
 
 ```bash
 npm install
-npm run dev:lab           # run a Pax tournament with random bots
+npm run dev:lab           # greedy vs. 2 random bots over 60 games
 ```
 
-Options:
+Pit named strategies against each other (one per seat). Seats rotate across
+games so first-player advantage is averaged out; results report per-seat-game
+win rate with 95% confidence intervals plus a head-to-head matrix.
 
 ```bash
-npm run dev:lab -- --game pax --players 3 --games 100 --seed 1 --max-steps 3000
+# 99 games, a heuristic vs. two random bots, write CSV + JSON
+npm run dev:lab -- --seats greedy,random,random --games 99 --seed 1 --out results
 ```
+
+Flags: `--game <id>`, `--seats <s1,s2,...>` (one strategy per seat),
+`--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate`, `--out <prefix>`.
+Built-in strategies: `random`, `first` (game-agnostic), `greedy` (Pax). A run is
+fully reproducible from its seed.
 
 ### Useful scripts
 

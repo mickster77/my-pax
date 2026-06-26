@@ -22,3 +22,4 @@ export type {
   RegionState
 } from "./types.js";
 export { paxGame } from "./game.js";
+export { paxGreedyPolicy } from "./policies.js";
