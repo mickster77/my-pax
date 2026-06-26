@@ -284,33 +284,14 @@ function hasRoadOnBorder(state: GameState, a: Region, b: Region, coalition: Excl
 // State Cloning
 // ============================================================
 
+// Generic deep clone. GameState is a pure JSON tree (no class instances, Maps,
+// Dates, or functions), so structuredClone is exact and — unlike the previous
+// hand-written clone — it does not silently alias when new fields are added to
+// the state shape. Falls back to a JSON round-trip on runtimes without the
+// structuredClone global (keeps this package free of @types/node / DOM lib).
 function cloneState(state: GameState): GameState {
-  return {
-    ...state,
-    players: state.players.map((p) => ({
-      ...p,
-      hand: [...p.hand],
-      court: [...p.court],
-      influence: { ...p.influence },
-      courtCardSpies: cloneSpies(p.courtCardSpies),
-    })),
-    marketRows: state.marketRows.map((row) => [...row]),
-    deck: [...state.deck],
-    board: state.board.map((r) => ({
-      ...r,
-      armies: { ...r.armies },
-      tribesByPlayer: { ...r.tribesByPlayer },
-    })),
-    borders: state.borders.map((b) => ({
-      ...b,
-      regions: [...b.regions] as [Region, Region],
-      roads: { ...b.roads },
-    })),
-    discard: [...state.discard],
-    usedCardThisTurn: [...state.usedCardThisTurn],
-    rupeesOnMarketCards: { ...state.rupeesOnMarketCards },
-    pendingMove: state.pendingMove ? { ...state.pendingMove } : null,
-  };
+  const sc = (globalThis as { structuredClone?: <T>(value: T) => T }).structuredClone;
+  return sc ? sc(state) : (JSON.parse(JSON.stringify(state)) as GameState);
 }
 
 function cloneSpies(spies: Record<CardId, Record<PlayerId, number>>): Record<CardId, Record<PlayerId, number>> {

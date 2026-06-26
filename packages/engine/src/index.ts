@@ -21,3 +21,4 @@ export type {
   PublicObservation,
   RegionState
 } from "./types.js";
+export { paxGame } from "./game.js";

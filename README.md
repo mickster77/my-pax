@@ -1,47 +1,56 @@
-# Pax Pamir Online (Monorepo Starter)
+# Strategy Lab
 
-Starter repository for building:
+A multi-game board-game **strategy lab**. Define playing strategies as bots, run
+large seeded AI-vs-AI tournaments, and compare win rates to find out which
+strategies actually work.
 
-- an online web version of Pax Pamir
-- a deterministic game engine
-- AI agent self-play and tournament simulation
+Pax Pamir 2e is the first game. The platform is built so adding a game —
+**Monopoly** and **Catan** are next — is just implementing one interface.
 
-## Structure
+> This started as a Pax Pamir 2e engine ([upstream](https://github.com/djfracking/pax))
+> and is being generalized into a game-agnostic strategy lab.
 
-- `packages/engine`: headless rules engine and shared game types
-- `apps/server`: authoritative real-time game server (WebSocket + HTTP)
-- `apps/web`: browser client UI
-- `apps/sim`: bot runner for AI-vs-AI matches
+## How it fits together
+
+Everything depends on a small generic core; each game is a plugin that
+implements the core's `GameDefinition`. Nothing in the lab or core knows about a
+specific game.
+
+- `packages/core` (`@lab/core`) — game-agnostic kernel: the `GameDefinition` and
+  `Policy` contracts, a seeded/serializable RNG, the match runner, baseline
+  policies, and the game registry.
+- `packages/engine` (`@pax/engine`) — the Pax Pamir 2e rules engine, plus a
+  `paxGame` adapter that implements `GameDefinition`.
+- `apps/lab` (`@lab/cli`) — runs tournaments and reports results.
+- `apps/server`, `apps/web` — the original Pax server + spectator UI (being
+  repurposed into a generic state inspector and results dashboard).
+
+Planned: `packages/games/monopoly`, `packages/games/catan`.
 
 ## Quick start
 
 ```bash
 npm install
-npm run dev:server
+npm run dev:lab           # run a Pax tournament with random bots
 ```
 
-In another terminal:
+Options:
 
 ```bash
-npm run dev:web
+npm run dev:lab -- --game pax --players 3 --games 100 --seed 1 --max-steps 3000
 ```
 
 ### Useful scripts
 
-- `npm run build`
 - `npm run typecheck`
-- `npm run dev:sim`
+- `npm run test`
+- `npm run build`
 
-## Current status
+## Adding a game
 
-This scaffold includes:
+1. Create a package that exports a `GameDefinition<State, Action, Observation>`.
+2. Make any in-game randomness draw from an RNG seeded off state (so runs stay
+   reproducible), and make `observe()` hide what a player shouldn't see.
+3. Register it in `apps/lab/src/registry.ts`.
 
-- rules-first engine scaffolding with card schema and validation
-- player-specific observations that include private hand + legal actions
-- legal action generation and click-to-act UI harness
-- server endpoints for creating and joining matches
-- websocket broadcasting of state and events
-- minimal web UI to inspect board state and execute any legal action
-- basic simulation CLI with random action selection
-
-The full Pax Pamir 2e rules are not implemented yet; this milestone provides the architecture and UI harness for rules-accurate implementation.
+That's it — the runner, stats, and viewer work against the interface, not your game.
