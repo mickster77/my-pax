@@ -1,5 +1,5 @@
 {
-  "name": "@pax/server",
+  "name": "@lab/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,12 +12,10 @@
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
-    "@pax/engine": "0.1.0",
-    "fastify": "^4.28.1",
-    "ws": "^8.18.3"
+    "fastify": "^4.28.1"
   },
   "devDependencies": {
-    "@types/ws": "^8.18.1",
+    "@types/node": "^22.5.0",
     "tsx": "^4.20.5"
   }
 }

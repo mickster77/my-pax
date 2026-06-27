@@ -1,5 +1,5 @@
 import type { GameDefinition } from "@lab/core";
-import { createInitialState, getLegalActions, applyAction, observe, result, describeAction } from "./engine.js";
+import { createInitialState, getLegalActions, applyAction, observe, result, describeAction, describeState } from "./engine.js";
 import type { CatanState, CatanAction, CatanObservation } from "./types.js";
 
 // Catan as a platform game plugin. Catan is the game with hidden information —
@@ -17,4 +17,5 @@ export const catanGame: GameDefinition<CatanState, CatanAction, CatanObservation
   observe,
   result,
   describeAction: (_state, action) => describeAction(action),
+  describeState,
 };

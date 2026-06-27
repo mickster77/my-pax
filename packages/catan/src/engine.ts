@@ -1,4 +1,4 @@
-import { makeRng, type GameResult, type PlayerId } from "@lab/core";
+import { makeRng, type GameResult, type PlayerId, type StateView } from "@lab/core";
 import {
   HEX_AXIAL,
   HEX_NODES,
@@ -681,4 +681,38 @@ export function result(state: CatanState): GameResult {
 
 export function describeAction(action: CatanAction): string {
   return action.type;
+}
+
+export function describeState(state: CatanState): StateView {
+  const devCount = (p: CatanPlayer): number =>
+    (Object.values(p.devCards) as number[]).reduce((a, b) => a + b, 0) +
+    (Object.values(p.pendingDevCards) as number[]).reduce((a, b) => a + b, 0);
+  const playerPanels = state.players.map((p) => ({
+    title: p.id,
+    rows: [
+      { label: "VP", value: String(totalVP(state, p)) },
+      { label: "resources", value: String(totalResources(p)) },
+      { label: "dev cards", value: String(devCount(p)) },
+      { label: "knights played", value: String(p.playedKnights) },
+      { label: "left S/C/R", value: `${p.settlementsLeft}/${p.citiesLeft}/${p.roadsLeft}` },
+    ],
+  }));
+  const status = state.finished
+    ? `winner ${state.winner ?? "—"}`
+    : `${state.players[state.current]?.id ?? "?"} to act`;
+  return {
+    summary: `Turn ${state.turn} · ${state.phase} · ${status}`,
+    panels: [
+      {
+        title: "Game",
+        rows: [
+          { label: "turn", value: String(state.turn) },
+          { label: "longest road", value: state.longestRoad ?? "—" },
+          { label: "largest army", value: state.largestArmy ?? "—" },
+          { label: "dev deck left", value: String(state.devDeck.length) },
+        ],
+      },
+      ...playerPanels,
+    ],
+  };
 }

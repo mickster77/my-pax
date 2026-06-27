@@ -4,6 +4,7 @@ import {
   getLegalActions,
   applyAction,
   toPlayerObservation,
+  describeState,
 } from "./engine.js";
 import type { GameState } from "./types.js";
 import type { GameAction } from "./actions.js";
@@ -51,4 +52,6 @@ export const paxGame: GameDefinition<GameState, GameAction, PlayerObservation> =
   result: paxResult,
 
   describeAction: (_state, action) => action.type,
+
+  describeState,
 };

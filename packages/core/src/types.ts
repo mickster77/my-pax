@@ -26,6 +26,17 @@ export interface GameMeta {
   maxPlayers: number;
 }
 
+/** A game-agnostic, renderable description of a state, for the web inspector. */
+export interface StatePanel {
+  title: string;
+  rows: Array<{ label: string; value: string }>;
+}
+export interface StateView {
+  /** One-line status, e.g. "Turn 12 · p1 to move". */
+  summary: string;
+  panels: StatePanel[];
+}
+
 /**
  * The contract every game implements. The runner, lab, and viewer depend ONLY on
  * this interface — never on a concrete game — which is what lets new games plug in.
@@ -68,6 +79,9 @@ export interface GameDefinition<State, Action, Observation> {
 
   /** Optional human-readable description of an action, for logs/replay. */
   describeAction?(state: State, action: Action): string;
+
+  /** Optional game-agnostic rendering of a state, for the web inspector/replay. */
+  describeState?(state: State): StateView;
 }
 
 export interface PolicyContext<Action, Observation> {

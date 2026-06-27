@@ -100,4 +100,30 @@ export const ticTacToeGame: GameDefinition<TicTacToeState, TicTacToeAction, TicT
   },
 
   describeAction: (_state, action) => `place ${action.cell}`,
+
+  describeState(state) {
+    const sym = (m: Mark | null): string => (m === null ? "·" : m === 0 ? "X" : "O");
+    const rows = [0, 3, 6].map((i) => ({
+      label: `row ${i / 3 + 1}`,
+      value: `${sym(state.cells[i])} ${sym(state.cells[i + 1])} ${sym(state.cells[i + 2])}`,
+    }));
+    const status = state.finished
+      ? state.winner !== null
+        ? `${state.playerIds[state.winner]} wins`
+        : "draw"
+      : `${state.playerIds[state.current]} (${state.current === 0 ? "X" : "O"}) to move`;
+    return {
+      summary: status,
+      panels: [
+        { title: "Board", rows },
+        {
+          title: "Players",
+          rows: [
+            { label: "X", value: state.playerIds[0] },
+            { label: "O", value: state.playerIds[1] },
+          ],
+        },
+      ],
+    };
+  },
 };

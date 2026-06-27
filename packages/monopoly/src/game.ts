@@ -1,5 +1,5 @@
 import type { GameDefinition } from "@lab/core";
-import { createInitialState, getLegalActions, applyAction, observe, result, describeAction } from "./engine.js";
+import { createInitialState, getLegalActions, applyAction, observe, result, describeAction, describeState } from "./engine.js";
 import type { MonopolyState, MonopolyAction, MonopolyObservation } from "./types.js";
 
 // Monopoly as a platform game plugin. Monopoly is dice-driven, so this is the
@@ -19,4 +19,5 @@ export const monopolyGame: GameDefinition<MonopolyState, MonopolyAction, Monopol
   observe,
   result,
   describeAction: (_state, action) => describeAction(action),
+  describeState,
 };

@@ -3,6 +3,9 @@ import {
   runTournament,
   tournamentGamesCsv,
   tournamentSummary,
+  recordGame,
+  type Policy,
+  type PlayerId,
   type Strategy,
   type TournamentResult,
 } from "@lab/core";
@@ -21,6 +24,7 @@ interface Args {
   maxSteps: number;
   rotate: boolean;
   out: string | null;
+  replay: string | null;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -32,6 +36,7 @@ function parseArgs(argv: string[]): Args {
     maxSteps: 3000,
     rotate: true,
     out: null,
+    replay: null,
   };
 
   const str = (key: string, raw: string | undefined): string => {
@@ -64,6 +69,7 @@ function parseArgs(argv: string[]): Args {
       case "--max-steps": args.maxSteps = int(key, consume()); break;
       case "--no-rotate": args.rotate = false; break;
       case "--out": args.out = str(key, consume()); break;
+      case "--replay": args.replay = str(key, consume()); break;
       default: throw new Error(`Unknown argument: ${argv[i]}`);
     }
   }
@@ -164,6 +170,16 @@ function main(): void {
     writeFileSync(csvPath, tournamentGamesCsv(result));
     console.log("");
     console.log(`Wrote ${summaryPath} and ${csvPath}`);
+  }
+
+  if (args.replay) {
+    const playerIds: PlayerId[] = lineup.map((_, i) => `p${i + 1}`);
+    const policies: Record<PlayerId, Policy<unknown, unknown>> = Object.fromEntries(
+      lineup.map((s, i) => [playerIds[i], s.policy])
+    );
+    const replay = recordGame(def, policies, playerIds, { seed: args.seed, maxSteps: args.maxSteps });
+    writeFileSync(args.replay, JSON.stringify(replay));
+    console.log(`Wrote replay ${args.replay} (${replay.frames.length} frames, ${replay.result.endReason})`);
   }
 }
 

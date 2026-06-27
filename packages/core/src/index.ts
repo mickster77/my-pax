@@ -6,7 +6,11 @@ export type {
   GameDefinition,
   PolicyContext,
   Policy,
+  StateView,
+  StatePanel,
 } from "./types.js";
+export { recordGame } from "./replay.js";
+export type { Replay, ReplayFrame } from "./replay.js";
 export type { Rng, RngState } from "./rng.js";
 export { makeRng } from "./rng.js";
 export { runGame, runBatch } from "./runner.js";

@@ -1,4 +1,4 @@
-import { makeRng, type GameResult, type PlayerId } from "@lab/core";
+import { makeRng, type GameResult, type PlayerId, type StateView } from "@lab/core";
 import {
   BOARD,
   COLOR_GROUPS,
@@ -543,6 +543,37 @@ export function result(state: MonopolyState): GameResult {
   const bankruptCount = state.players.filter((p) => p.bankrupt).length;
   const endReason = bankruptCount === state.players.length - 1 ? "victory" : "max_turns";
   return { winnerIds: state.winner ? [state.winner] : [], scores, turns: state.turn, endReason };
+}
+
+export function describeState(state: MonopolyState): StateView {
+  const ownedCount = (pid: string): number =>
+    OWNABLE_INDICES.filter((idx) => state.ownables[idx].owner === pid).length;
+  const playerPanels = state.players.map((p) => ({
+    title: `${p.id}${p.bankrupt ? " (bankrupt)" : ""}`,
+    rows: [
+      { label: "cash", value: `$${p.cash}` },
+      { label: "position", value: spaceAt(p.position).name },
+      { label: "properties", value: String(ownedCount(p.id)) },
+      { label: "net worth", value: `$${netWorth(state, p)}` },
+      { label: "in jail", value: p.inJail ? "yes" : "no" },
+    ],
+  }));
+  const status = state.finished ? `winner ${state.winner ?? "—"}` : `${state.players[state.current].id} to act`;
+  return {
+    summary: `Turn ${state.turn} · ${state.phase} · ${status}`,
+    panels: [
+      {
+        title: "Game",
+        rows: [
+          { label: "turn", value: String(state.turn) },
+          { label: "phase", value: state.phase },
+          { label: "houses left", value: String(state.housesRemaining) },
+          { label: "last roll", value: state.dice ? `${state.dice[0]}+${state.dice[1]}` : "—" },
+        ],
+      },
+      ...playerPanels,
+    ],
+  };
 }
 
 export function describeAction(action: MonopolyAction): string {

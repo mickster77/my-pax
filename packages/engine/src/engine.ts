@@ -1,3 +1,4 @@
+import type { StateView } from "@lab/core";
 import type { GameAction, LegalActionChoice } from "./actions.js";
 import {
   CARD_LIBRARY, validateCardLibrary, areRegionsAdjacent, getAdjacentRegions,
@@ -1483,6 +1484,36 @@ export function toPublicObservation(state: GameState): PublicObservation {
     favoredSuit: state.favoredSuit,
     rupeesOnMarketCards: { ...state.rupeesOnMarketCards },
     pendingMove: state.pendingMove ? { ...state.pendingMove } : null,
+  };
+}
+
+export function describeState(state: GameState): StateView {
+  const playerPanels = state.players.map((p) => ({
+    title: `${p.id} (${p.coalition})`,
+    rows: [
+      { label: "VP", value: String(p.victoryPoints) },
+      { label: "rupees", value: String(p.rupees) },
+      { label: "court", value: String(p.court.length) },
+      { label: "hand", value: String(p.hand.length) },
+      { label: "influence", value: `a${p.influence.afghan} b${p.influence.british} r${p.influence.russian}` },
+    ],
+  }));
+  const status = state.isFinished
+    ? `winner ${state.winnerPlayerId ?? "—"}`
+    : `${state.currentPlayerId} to act`;
+  return {
+    summary: `Turn ${state.turn} · ${state.phase} · ${status} · favored ${state.favoredSuit}`,
+    panels: [
+      {
+        title: "Game",
+        rows: [
+          { label: "turn", value: String(state.turn) },
+          { label: "dominance checks left", value: String(state.dominanceChecksRemaining) },
+          { label: "deck", value: String(state.deckCount) },
+        ],
+      },
+      ...playerPanels,
+    ],
   };
 }
 

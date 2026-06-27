@@ -25,9 +25,13 @@ specific game.
   game that exercises the in-game RNG model) + a `buyer` policy.
 - `packages/catan` (`@games/catan`) — a Catan engine (dice + hidden dev cards;
   the game that exercises hidden-information observations) + a `builder` policy.
-- `apps/lab` (`@lab/cli`) — runs tournaments and reports results.
-- `apps/server`, `apps/web` — the original Pax server + spectator UI (to be
-  repurposed into a generic state inspector and results dashboard).
+- `apps/lab` (`@lab/cli`) — runs tournaments and reports results; `--out` writes a
+  summary + CSV, `--replay` records a game.
+- `apps/web` (`@lab/web`) — a generic web UI: a results dashboard (win rates +
+  CIs, head-to-head, endings) and a replay inspector that steps through a game
+  using each game's `describeState` panels. No per-game UI code.
+- `apps/server` (`@lab/server`) — a small results/replay API that serves the
+  JSON files the lab writes to a `runs/` dir.
 
 ## Quick start
 
@@ -56,6 +60,20 @@ strategy per seat), `--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate
 `--out <prefix>`. Built-in strategies: `random`, `first` (any game), `greedy`
 (Pax), `buyer` (Monopoly), `builder` (Catan). A run is fully reproducible from
 its seed.
+
+### Web UI
+
+```bash
+npm run dev:web     # dashboard + replay inspector at http://localhost:5173
+```
+
+It loads a bundled sample by default; use the in-page file pickers to load your
+own `--out` summary or `--replay` JSON. To serve runs over HTTP instead:
+
+```bash
+npm run dev:lab -- --game catan --seats builder,random,random --out runs/catan --replay runs/catan.replay.json
+npm run dev:server  # results/replay API at http://localhost:4000 (reads ./runs)
+```
 
 ### Useful scripts
 
