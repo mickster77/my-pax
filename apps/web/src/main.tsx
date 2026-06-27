@@ -1,6 +1,13 @@
-import { useEffect, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import type { Replay, StateView, TournamentResult } from "@lab/core";
+import { PaxBoard } from "./games/pax";
+
+// Custom per-game board renderers (keyed by game id). Games without one fall back
+// to the generic describeState panels.
+const CUSTOM_RENDERERS: Record<string, (snapshot: unknown) => ReactNode> = {
+  pax: (snapshot) => <PaxBoard snapshot={snapshot} />,
+};
 
 // Strategy Lab web UI. Two game-agnostic views over the lab's output:
 //   - Results dashboard: a tournament's --out summary JSON (win rates + CIs,
@@ -196,6 +203,7 @@ function ReplayViewer() {
   const [replay, setReplay] = useState<Replay | null>(null);
   const [idx, setIdx] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [boardView, setBoardView] = useState(true);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -253,6 +261,8 @@ function ReplayViewer() {
     );
   }
   const frame = frames[Math.min(idx, frames.length - 1)];
+  const renderer: ((snapshot: unknown) => ReactNode) | undefined = CUSTOM_RENDERERS[replay.gameId];
+  const hasSnapshot = frame.snapshot != null;
 
   return (
     <div>
@@ -282,15 +292,23 @@ function ReplayViewer() {
         </div>
       </div>
 
-      <div style={{ margin: "16px 0", padding: "10px 14px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 8 }}>
-        <div style={{ fontSize: 15 }}>{frame.view.summary}</div>
-        <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
-          {frame.actionLabel ? `last action: ${frame.actionLabel}` : "initial state"}
-          {frame.actor ? ` · ${frame.actor} to move` : " · game over"}
+      <div style={{ margin: "16px 0", padding: "10px 14px", background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 15 }}>{frame.view.summary}</div>
+          <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
+            {frame.actionLabel ? `last action: ${frame.actionLabel}` : "initial state"}
+            {frame.actor ? ` · ${frame.actor} to move` : " · game over"}
+          </div>
         </div>
+        {renderer !== undefined && hasSnapshot && (
+          <div style={{ display: "flex", gap: 4 }}>
+            <button style={{ ...btn, background: boardView ? C.accent : C.cardAlt, color: boardView ? "#0b1220" : C.text }} onClick={() => setBoardView(true)}>Board</button>
+            <button style={{ ...btn, background: boardView ? C.cardAlt : C.accent, color: boardView ? C.text : "#0b1220" }} onClick={() => setBoardView(false)}>Data</button>
+          </div>
+        )}
       </div>
 
-      <Panels view={frame.view} />
+      {renderer !== undefined && hasSnapshot && boardView ? renderer(frame.snapshot) : <Panels view={frame.view} />}
     </div>
   );
 }
