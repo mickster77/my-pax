@@ -1,22 +1,23 @@
 {
-  "name": "pax-pamir-online",
+  "name": "strategy-lab",
   "version": "0.1.0",
   "private": true,
-  "description": "Online Pax Pamir platform with AI-vs-AI support.",
+  "description": "Multi-game board-game strategy lab: define strategies as bots, run seeded AI-vs-AI tournaments, and compare win rates. Pax Pamir 2e today; Monopoly and Catan next.",
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
     "build": "npm run build -ws --if-present",
-    "dev:server": "npm --workspace @pax/server run dev",
-    "dev:web": "npm --workspace @pax/web run dev",
-    "dev:sim": "npm --workspace @pax/sim run dev",
+    "dev:server": "npm --workspace @lab/server run dev",
+    "dev:web": "npm --workspace @lab/web run dev",
+    "dev:lab": "tsx apps/lab/src/index.ts",
     "lint": "npm run lint -ws --if-present",
     "test": "npm run test -ws --if-present",
     "typecheck": "npm run typecheck -ws --if-present"
   },
   "devDependencies": {
+    "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
   "engines": {

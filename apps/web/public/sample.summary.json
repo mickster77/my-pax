@@ -1,0 +1,66 @@
+{
+  "gameId": "catan",
+  "seatCount": 3,
+  "games": 60,
+  "rotateSeats": true,
+  "lineup": [
+    "builder",
+    "random",
+    "random"
+  ],
+  "perStrategy": [
+    {
+      "name": "builder",
+      "seatGames": 60,
+      "wins": 59,
+      "winRate": 0.9833333333333333,
+      "ci95": [
+        0.9114487026974725,
+        0.9970518402061834
+      ],
+      "meanScore": 9.983333333333333
+    },
+    {
+      "name": "random",
+      "seatGames": 120,
+      "wins": 1,
+      "winRate": 0.008333333333333333,
+      "ci95": [
+        0.001472555732858035,
+        0.045696291259405594
+      ],
+      "meanScore": 3.25
+    }
+  ],
+  "headToHead": {
+    "names": [
+      "builder",
+      "random"
+    ],
+    "outscoreRate": {
+      "builder": {
+        "builder": null,
+        "random": 0.9916666666666667
+      },
+      "random": {
+        "builder": 0.008333333333333333,
+        "random": null
+      }
+    },
+    "counts": {
+      "builder": {
+        "builder": 0,
+        "random": 120
+      },
+      "random": {
+        "builder": 120,
+        "random": 0
+      }
+    }
+  },
+  "byEndReason": {
+    "victory": 54,
+    "max_turns": 6
+  },
+  "noSingleWinner": 0
+}
