@@ -54,4 +54,9 @@ export const paxGame: GameDefinition<GameState, GameAction, PlayerObservation> =
   describeAction: (_state, action) => action.type,
 
   describeState,
+
+  // The full state feeds the custom Pax board renderer in the web replay inspector.
+  // States are immutable once produced (applyAction returns fresh objects), so
+  // handing the reference to the recorder is safe; it is serialized into the replay.
+  snapshot: (state) => state,
 };

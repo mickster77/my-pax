@@ -82,6 +82,13 @@ export interface GameDefinition<State, Action, Observation> {
 
   /** Optional game-agnostic rendering of a state, for the web inspector/replay. */
   describeState?(state: State): StateView;
+
+  /**
+   * Optional game-specific, JSON-serializable snapshot for a CUSTOM web renderer
+   * (e.g. a hand-drawn board). The web app renders this with a per-game component
+   * when one is registered, and falls back to describeState panels otherwise.
+   */
+  snapshot?(state: State): unknown;
 }
 
 export interface PolicyContext<Action, Observation> {

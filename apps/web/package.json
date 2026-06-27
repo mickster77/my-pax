@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@lab/core": "0.1.0",
+    "@pax/engine": "0.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

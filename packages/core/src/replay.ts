@@ -12,6 +12,8 @@ export interface ReplayFrame {
   /** The action that produced this state (null for the initial frame). */
   actionLabel: string | null;
   view: StateView;
+  /** Game-specific snapshot for a custom renderer (present only if the game defines snapshot()). */
+  snapshot?: unknown;
 }
 
 export interface Replay {
@@ -42,9 +44,11 @@ export function recordGame<State, Action, Observation>(
   const maxSteps = opts.maxSteps ?? 5000;
   const rng = makeRng(opts.policySeed ?? (opts.seed >>> 0) ^ 0x5bd1e995);
 
+  const snapOf = (s: State): unknown => (def.snapshot ? def.snapshot(s) : undefined);
+
   let state = def.createInitialState(playerIds, opts.seed);
   const frames: ReplayFrame[] = [
-    { index: 0, actor: def.currentPlayer(state), actionLabel: null, view: viewOf(def, state) },
+    { index: 0, actor: def.currentPlayer(state), actionLabel: null, view: viewOf(def, state), snapshot: snapOf(state) },
   ];
 
   let steps = 0;
@@ -69,7 +73,7 @@ export function recordGame<State, Action, Observation>(
     const actionLabel = def.describeAction ? def.describeAction(state, action) : "action";
     state = def.applyAction(state, action);
     steps += 1;
-    frames.push({ index: steps, actor: def.currentPlayer(state), actionLabel, view: viewOf(def, state) });
+    frames.push({ index: steps, actor: def.currentPlayer(state), actionLabel, view: viewOf(def, state), snapshot: snapOf(state) });
   }
 
   // Match runGame: report why the run stopped when the game itself didn't end.
