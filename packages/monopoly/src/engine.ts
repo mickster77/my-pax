@@ -527,6 +527,12 @@ function handleBankruptcy(state: MonopolyState, p: MonopolyPlayer): void {
 
 // ---------- observation / result ----------
 
+// Monopoly has no hidden information, but the observation must still be a copy:
+// returning live state would let a policy mutate the game (breaking reproducibility).
+export function observe(state: MonopolyState): MonopolyState {
+  return clone(state);
+}
+
 export function result(state: MonopolyState): GameResult {
   const scores: Record<PlayerId, number> = Object.fromEntries(
     state.players.map((p) => [p.id, netWorth(state, p)])

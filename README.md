@@ -23,11 +23,11 @@ specific game.
   adapter and a `greedy` policy.
 - `packages/monopoly` (`@games/monopoly`) — a Monopoly engine (dice-driven; the
   game that exercises the in-game RNG model) + a `buyer` policy.
+- `packages/catan` (`@games/catan`) — a Catan engine (dice + hidden dev cards;
+  the game that exercises hidden-information observations) + a `builder` policy.
 - `apps/lab` (`@lab/cli`) — runs tournaments and reports results.
 - `apps/server`, `apps/web` — the original Pax server + spectator UI (to be
   repurposed into a generic state inspector and results dashboard).
-
-Planned: `packages/catan`.
 
 ## Quick start
 
@@ -46,12 +46,16 @@ npm run dev:lab -- --game pax --seats greedy,random,random --games 99 --seed 1 -
 
 # Monopoly: an aggressive buyer vs. two random bots
 npm run dev:lab -- --game monopoly --seats buyer,random,random --games 99 --seed 1
+
+# Catan: a builder vs. two random bots (Catan games are longer — raise the step cap)
+npm run dev:lab -- --game catan --seats builder,random,random --games 60 --seed 1 --max-steps 60000
 ```
 
-Flags: `--game <id>` (`pax`, `monopoly`), `--seats <s1,s2,...>` (one strategy per
-seat), `--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate`, `--out <prefix>`.
-Built-in strategies: `random`, `first` (any game), `greedy` (Pax), `buyer`
-(Monopoly). A run is fully reproducible from its seed.
+Flags: `--game <id>` (`pax`, `monopoly`, `catan`), `--seats <s1,s2,...>` (one
+strategy per seat), `--games <n>`, `--seed <n>`, `--max-steps <n>`, `--no-rotate`,
+`--out <prefix>`. Built-in strategies: `random`, `first` (any game), `greedy`
+(Pax), `buyer` (Monopoly), `builder` (Catan). A run is fully reproducible from
+its seed.
 
 ### Useful scripts
 
