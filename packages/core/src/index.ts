@@ -23,3 +23,5 @@ export type {
   HeadToHead,
 } from "./tournament.js";
 export { wilson95, mean } from "./stats.js";
+export { checkConformance, formatConformance } from "./conformance.js";
+export type { ConformanceOptions, ConformanceCheck, ConformanceReport } from "./conformance.js";

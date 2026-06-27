@@ -1,25 +1,22 @@
 {
-  "name": "@lab/cli",
+  "name": "@games/tictactoe",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/index.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run"
   },
   "dependencies": {
-    "@games/catan": "0.1.0",
-    "@games/monopoly": "0.1.0",
-    "@games/tictactoe": "0.1.0",
-    "@lab/core": "0.1.0",
-    "@pax/engine": "0.1.0"
+    "@lab/core": "0.1.0"
   },
   "devDependencies": {
-    "tsx": "^4.20.5",
     "vitest": "^4.1.2"
   }
 }

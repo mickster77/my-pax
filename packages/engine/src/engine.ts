@@ -1454,6 +1454,7 @@ export function toPublicObservation(state: GameState): PublicObservation {
     currentPlayerId: state.currentPlayerId,
     players: state.players.map(({ hand, ...rest }) => ({
       ...rest,
+      court: [...rest.court], // copy: the observation must not alias engine state
       influence: { ...rest.influence },
       courtCardSpies: cloneSpies(rest.courtCardSpies),
     })),

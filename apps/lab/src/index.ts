@@ -129,11 +129,11 @@ function main(): void {
   if (args.seats.length < def.meta.minPlayers || args.seats.length > def.meta.maxPlayers) {
     throw new Error(
       `${def.meta.name} supports ${def.meta.minPlayers}-${def.meta.maxPlayers} players; ` +
-        `--seats has ${args.seats.length}. Available strategies: ${strategyNames().join(", ")}`
+        `--seats has ${args.seats.length}. Available strategies: ${strategyNames(args.game).join(", ")}`
     );
   }
 
-  const lineup: Strategy[] = args.seats.map(resolveStrategy);
+  const lineup: Strategy[] = args.seats.map((name) => resolveStrategy(args.game, name));
 
   console.log(`Game: ${def.meta.name} (${def.id})`);
   console.log(`Seats: ${args.seats.join(", ")}`);
